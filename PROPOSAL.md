@@ -2,28 +2,21 @@
 
 ## Group Members:
 
-names here.
+Otto Buff
        
 # Intentions:
 
-A statement of the problem you are solving and/or a high level description of the project.
+This project will allow clients to access files from a server – a collaborative text editor. The clients will be able to read and modify the files in the server, and the files will be stored in a linked list. Each file will have an index, allowing the clients to select a specific file. The contents of each file will be split into lines, each with its own index in a linked list as well. The contents of the file will be printed to the client, who will be able to modify it. The client sends back the modified file to the server.
     
 # Intended usage:
 
-A description as to how the project will be used (describe the user interface).
+Users will be able to view a list of files and select one to view or modify. The contents of the file they select will be printed to the user, and they will be able to modify the file by entering a line number and altering it.
+
   
 # Technical Details:
 
-A description of your technical design. This should include:
-   
-How you will be using the topics covered in class in the project.
-     
-How you are breaking down the project and who is responsible for which parts.
-  
-What data structures you will be using and how.
-     
-What algorithms and /or data structures you will be using, and how.
-    
+I will use files, memory allocation, semaphores, pipes, and forks. As I am working alone, I will be responsible for all parts. The files will be stored in a linked list (memory allocation), pipes will allow information to be passed back and forth between the client and server, the sempahores will synchronize the process between multiple users, and the forks will create a process for each user. 
+
 # Intended pacing:
 
-A timeline with expected completion dates of parts of the project.
+I will create the linked list portion first, followed by pipes, followed by semaphores and forks. I hope to finish before the last day of in person school, January 17.
