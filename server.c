@@ -14,14 +14,16 @@ struct line{
   struct line *nextline;
 };
 
-struct file{
+struct document{
   int fileind;
-  struct line filecontents;
-  struct file *nextfile;
+  int w_file;
+  struct document *nextdocument;
 }
   
 
 int main() {
+  
+  struct document *first;
   int to_client;
   int from_client;
   signal(SIGINT, signal_handler);
@@ -29,13 +31,12 @@ int main() {
   while(1){
     from_client = server_handshake( &to_client );
     while(1){
-      int ran = randomint();
+      int ran;
       int i = write(to_client,&ran,sizeof(ran));
       if(i <= 0){
         printf("client exited\n");
         break;
       }
-      sleep(1);
     }
     close(from_client);
     close(to_client);
@@ -85,17 +86,6 @@ void server_handshake_half(int *to_client, int from_client) {
   printf("server 9: %d\n",finalack);
 }
 
-int randomint(){
-  int r_file = open("/dev/random", O_RDONLY , 0);
-  
-  int buff;
-  int *p = &buff;
-  int bytes = read(r_file, p, sizeof(int));
-  
-  close(r_file);
-  
-  return buff;
-}
 
 
 int server_connect(int from_client) {
