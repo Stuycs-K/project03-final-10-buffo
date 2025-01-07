@@ -8,6 +8,19 @@
 #include <errno.h>
 #include "server.h"
 
+struct line{
+  int lineind;
+  char linecontents[200];
+  struct line *nextline;
+};
+
+struct file{
+  int fileind;
+  struct line filecontents;
+  struct file *nextfile;
+}
+  
+
 int main() {
   int to_client;
   int from_client;
