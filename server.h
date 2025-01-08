@@ -7,11 +7,16 @@ struct line{
   struct line *nextline;
 };
 
-struct document{
+struct file{
   char name[200];
   int fileind;
   int w_file;
-  struct document *nextdocument;
+  struct file *nextfile;
+};
+
+struct message{
+  char command[200];
+  char text[200];
 };
 
 #endif

@@ -26,7 +26,6 @@ void signal_handler(int signum) {
 }
 
 int main() {
-  int to_client;
   int from_client;
   signal(SIGINT, signal_handler);
   signal(SIGPIPE, SIG_IGN);
@@ -34,15 +33,15 @@ int main() {
     int from_client = server_setup();
     pid_t p = fork();
     if(p == 0){
-      server_handshake_half( &to_client, from_client );
+      int to_client = server_handshake_half( from_client );
       while(1){
-        int ran = 10;
-        int i = write(to_client,&ran,sizeof(ran));
+        struct message m;
+        int i = read(from_client,&m,sizeof(m));
         if(i <= 0){
           printf("client exited\n");
           break;
         }
-        sleep(1);
+        do_command(m);
       }
       close(from_client);
       close(to_client);
