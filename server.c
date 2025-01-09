@@ -11,38 +11,61 @@
 #include "server.h"
 #include "pipe_networking.h"
 
-struct document *first = NULL;
+struct file *first = NULL;
 
 void signal_handler(int signum) {
   printf("server exited\n");
   unlink(WKP);
   while(first != NULL){
-    struct document *p = first;
-    first = first->nextdocument;
+    struct file *p = first;
+    first = first->nextfile;
     close(first->w_file);
     free(first);
   }
   exit(1);
 }
 
-int do_command(struct message m){
+void do_command(struct message m, struct message *answer){
   printf("%s\n", m.command);
   printf("%s\n", m.text);
-
-  if (strcmp(m.command, “open");
-  {
-    struct file *temp = firstfile;
-    while (temp != NULL && strcmp(temp.name, m.text) != 0){
-      temp = temp.nextfile;
+  
+  struct file *temp = first;
+  
+  if (strcmp(m.command, "open") == 0){
+    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+      temp = temp->nextfile;
     }
     if(temp == NULL){
-       // create file
+      strcpy(answer->command, "failed")
+      strcpy(answer->text, temp->name)
     }
     else{
-      printf(“open\n”);
-      temp.w_file = open(temp.name, O_RDONLY, 0611);
+      printf("open\n");
+      temp->w_file = open(temp->name, O_RDONLY, 0611);
+      strcpy(answer->command, "success")
+      strcpy(answer->text, temp->name)
     }
+  }
+  else{
+    while (temp != NULL){
+      temp = temp->nextfile;
+    }
+    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+      temp = temp->nextfile;
+    }
+    if(temp != NULL){
+      strcpy(answer.command, "failed")
+      strcpy(answer.text, temp->name)
+    }
+    else{
+      printf("create\n");
+      temp->w_file = open(temp->name, O_CREAT, 0611);
+      strcpy(answer.command, "success")
+      strcpy(answer.text, temp->name)
+    }
+  }
 }
+
 
 int main() {
   int from_client;
