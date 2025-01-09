@@ -25,6 +25,25 @@ void signal_handler(int signum) {
   exit(1);
 }
 
+int do_command(struct message m){
+  printf("%s\n", m.command);
+  printf("%s\n", m.text);
+
+  if (strcmp(m.command, “open");
+  {
+    struct file *temp = firstfile;
+    while (temp != NULL && strcmp(temp.name, m.text) != 0){
+      temp = temp.nextfile;
+    }
+    if(temp == NULL){
+       // create file
+    }
+    else{
+      printf(“open\n”);
+      temp.w_file = open(temp.name, O_RDONLY, 0611);
+    }
+}
+
 int main() {
   int from_client;
   signal(SIGINT, signal_handler);
