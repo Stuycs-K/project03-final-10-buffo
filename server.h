@@ -19,7 +19,7 @@ struct message{
   char text[200];
 };
 
-void signal_handler(int signum);
+void signal_handler(int signum, struct file *first);
 void do_command(struct message m, struct message *answer);
 
 #endif
