@@ -19,8 +19,10 @@ int main() {
     struct message m;
     printf("Open or create: ");
     fgets(m.command,sizeof(m.command),stdin);
+    m.command[strlen(m.command) - 1] = '\0';
     printf("File name: ");
     fgets(m.text,sizeof(m.text),stdin);
+    m.text[strlen(m.text) - 1] = '\0';
     write(to_server,&m,sizeof(m));
   }
 }

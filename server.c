@@ -26,8 +26,6 @@ void signal_handler(int signum) {
 }
 
 void do_command(struct message m, struct message *answer){
-  printf("%s\n", m.command);
-  printf("%s\n", m.text);
   
   struct file *temp = first;
   
@@ -36,17 +34,17 @@ void do_command(struct message m, struct message *answer){
       temp = temp->nextfile;
     }
     if(temp == NULL){
-      strcpy(answer->command, "failed")
-      strcpy(answer->text, temp->name)
+      strcpy(answer->command, "failed");
+      strcpy(answer->text, temp->name);
     }
     else{
       printf("open\n");
       temp->w_file = open(temp->name, O_RDONLY, 0611);
-      strcpy(answer->command, "success")
-      strcpy(answer->text, temp->name)
+      strcpy(answer->command, "success");
+      strcpy(answer->text, temp->name);
     }
   }
-  else{
+  else if (strcmp(m.command, "create") == 0){
     while (temp != NULL){
       temp = temp->nextfile;
     }
@@ -54,15 +52,18 @@ void do_command(struct message m, struct message *answer){
       temp = temp->nextfile;
     }
     if(temp != NULL){
-      strcpy(answer.command, "failed")
-      strcpy(answer.text, temp->name)
+      strcpy(answer->command, "failed");
+      strcpy(answer->text, temp->name);
     }
     else{
       printf("create\n");
       temp->w_file = open(temp->name, O_CREAT, 0611);
-      strcpy(answer.command, "success")
-      strcpy(answer.text, temp->name)
+      strcpy(answer->command, "success");
+      strcpy(answer->text, temp->name);
     }
+  }
+  else{
+    printf("Invalid command: %s\n", m.command);
   }
 }
 
@@ -78,12 +79,13 @@ int main() {
       int to_client = server_handshake_half( from_client );
       while(1){
         struct message m;
+        struct message answer;
         int i = read(from_client,&m,sizeof(m));
         if(i <= 0){
           printf("client exited\n");
           break;
         }
-        do_command(m);
+        do_command(m, &answer);
       }
       close(from_client);
       close(to_client);

@@ -20,6 +20,6 @@ struct message{
 };
 
 void signal_handler(int signum);
-void do_command(struct message m);
+void do_command(struct message m, struct message *answer);
 
 #endif
