@@ -11,8 +11,9 @@
 #include "server.h"
 #include "pipe_networking.h"
 
+struct file *first = NULL;
+
 int main() {
-  //struct file *first = NULL;
   int from_client;
   //signal(SIGINT, signal_handler);
   //signal(SIGPIPE, SIG_IGN);
@@ -30,6 +31,7 @@ int main() {
           break;
         }
         do_command(m, &answer);
+        write(to_client,&answer,sizeof(answer));
       }
       close(from_client);
       close(to_client);
@@ -56,47 +58,81 @@ void do_command(struct message m, struct message *answer){
   printf("Command: %s------\n", m.command);
   printf("File name: %s------\n", m.text);
   
-  struct file *temp = NULL;
+  struct file *temp = first;
   
   if (strcmp(m.command, "open") == 0){
     while (temp != NULL && strcmp(temp->name, m.text) != 0){
       temp = temp->nextfile;
     }
-    if(temp == NULL){
-      strcpy(answer->command, "failed");
-      strcpy(answer->text, temp->name);
+    if(temp != NULL){
+      strcpy(answer->command, "already open");
+      strcpy(answer->text, m.text);
     }
     else{
-      printf("open\n");
-      temp->w_file = open(temp->name, O_RDONLY, 0611);
-      strcpy(answer->command, "success");
-      strcpy(answer->text, temp->name);
+      int fd = open(m.text, O_RDWR, 0611);
+      if(fd == -1){
+        strcpy(answer->command, "file does not exist");
+        strcpy(answer->text, m.text);
+      }
+      else{
+        struct file* new = (struct file*) malloc(sizeof(struct file));
+        printf("open\n");
+        new->w_file = fd;
+        new->nextfile = first;
+        strcpy(new->name, m.text);
+        first = new;
+        strcpy(answer->command, "opened");
+        strcpy(answer->text, m.text);
+      }
     }
   }
   else if (strcmp(m.command, "create") == 0){
-    printf("1\n");
-    while (temp != NULL){
-      printf("2\n");
-      temp = temp->nextfile;
-    }
     while (temp != NULL && strcmp(temp->name, m.text) != 0){
-      printf("3\n");
       temp = temp->nextfile;
     }
     if(temp != NULL){
-      printf("4\n");
-      strcpy(answer->command, "failed");
-      strcpy(answer->text, temp->name);
+      strcpy(answer->command, "already created");
+      strcpy(answer->text, m.text);
     }
     else{
-      printf("5\n");
-      //strcpy(temp->name, m.text);
-      printf("create\n");
-      printf("test\n");
-      temp->w_file = open(m.text, O_CREAT, 0611);
-      printf("file created\n");
-      strcpy(answer->command, "success\n");
-      strcpy(answer->text, temp->name);
+      int fd = open(m.text, O_RDWR, 0611);
+      if(fd != -1){
+        strcpy(answer->command, "file already exists");
+        strcpy(answer->text, m.text);
+        close(fd);
+      }
+      else{
+        int fd = open(m.text, O_CREAT | O_TRUNC | O_RDWR, 0611);
+        if(fd == -1){
+          strcpy(answer->command, "file cannot be created");
+          strcpy(answer->text, m.text);
+        }
+        else{
+          struct file* new = (struct file*) malloc(sizeof(struct file));
+          printf("open\n");
+          new->w_file = fd;
+          new->nextfile = first;
+          strcpy(new->name, m.text);
+          first = new;
+          strcpy(answer->command, "created");
+          strcpy(answer->text, m.text);
+        }
+      }
+    }
+  }
+  else if (strcmp(m.command, "close") == 0){
+    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+      temp = temp->nextfile;
+    }
+    if(temp == NULL){
+      strcpy(answer->command, "file not open");
+      strcpy(answer->text, m.text);
+    }
+    else{
+      close(temp->w_file);
+      free(temp);
+      strcpy(answer->command, "closed");
+      strcpy(answer->text, m.text);
     }
   }
   else{
