@@ -16,7 +16,7 @@ struct file{
 
 struct message{
   char command[200];
-  char text[200];
+  char text[400];
 };
 
 void signal_handler(int signum, struct file *first);

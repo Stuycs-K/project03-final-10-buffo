@@ -18,7 +18,7 @@ int main() {
   while(1){
     struct message m;
     struct message answer;
-    printf("open, create, close, read: ");
+    printf("Open, Create, Close, Read, Modify: ");
     fgets(m.command,sizeof(m.command),stdin);
     m.command[strlen(m.command) - 1] = '\0';
     printf("File name: ");
@@ -30,8 +30,7 @@ int main() {
       printf("server exited\n");
       break;
     }
-    printf("%s\n", answer.command);
-    printf("%s\n", answer.text);
+    printf("%s (%s) \n", answer.command, answer.text);
   }
 }
 
