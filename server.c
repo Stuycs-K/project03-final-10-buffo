@@ -135,6 +135,21 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->text, m.text);
     }
   }
+  else if (strcmp(m.command, "read") == 0){
+    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+      temp = temp->nextfile;
+    }
+    if(temp == NULL){
+      strcpy(answer->command, "file not open");
+      strcpy(answer->text, m.text);
+    }
+    else{
+      lseek(temp->w_file, 0, SEEK_SET);
+      int n = read(temp->w_file, answer->text);
+      answer->text[n] = '\0';
+      strcpy(answer->command, "content");
+    }
+  }
   else{
     printf("Invalid command: %s\n", m.command);
   }
