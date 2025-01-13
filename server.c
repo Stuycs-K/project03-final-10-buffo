@@ -149,7 +149,7 @@ void do_command(struct message m, struct message *answer){
       answer->text[n] = '\0';
       strcpy(answer->command, "content");
     }
-  }
+  } 
   else{
     printf("Invalid command: %s\n", m.command);
   }
