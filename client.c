@@ -22,15 +22,22 @@ int main() {
     fgets(m.command,sizeof(m.command),stdin);
     m.command[strlen(m.command) - 1] = '\0';
     printf("File name: ");
-    fgets(m.text,sizeof(m.text),stdin);
-    m.text[strlen(m.text) - 1] = '\0';
+    fgets(m.filename,sizeof(m.filename),stdin);
+    m.filename[strlen(m.filename) - 1] = '\0';
+    if(strcmp(m.command, "Modify") == 0){
+      printf("Text: ");
+      fgets(m.text,sizeof(m.text),stdin);
+    }
     write(to_server,&m,sizeof(m));
     int i = read(from_server,&answer,sizeof(answer));
     if(i <= 0){
       printf("server exited\n");
       break;
     }
-    printf("%s (%s) \n", answer.command, answer.text);
+    printf("%s\n", answer.command);
+    if(strcmp(answer.command, "File contents: ") == 0){
+      printf("%s", answer.text);
+    }
   }
 }
 

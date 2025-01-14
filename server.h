@@ -1,12 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-struct line{
-  int lineind;
-  char linecontents[200];
-  struct line *nextline;
-};
-
 struct file{
   char name[200];
   int fileind;
@@ -16,7 +10,8 @@ struct file{
 
 struct message{
   char command[200];
-  char text[400];
+  char filename[200];
+  char text[1000];
 };
 
 void signal_handler(int signum, struct file *first);

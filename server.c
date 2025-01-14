@@ -56,92 +56,92 @@ int main() {
 void do_command(struct message m, struct message *answer){
   
   printf("Command: %s------\n", m.command);
-  printf("File name: %s------\n", m.text);
+  printf("File name: %s------\n", m.filename);
   
   struct file *temp = first;
   
   if (strcmp(m.command, "Open") == 0){
-    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
     if(temp != NULL){
       strcpy(answer->command, "File already open");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
     else{
-      int fd = open(m.text, O_RDWR, 0611);
+      int fd = open(m.filename, O_RDWR, 0611);
       if(fd == -1){
         strcpy(answer->command, "File does not exist");
-        strcpy(answer->text, m.text);
+        strcpy(answer->filename, m.filename);
       }
       else{
         struct file* new = (struct file*) malloc(sizeof(struct file));
         printf("Open\n");
         new->w_file = fd;
         new->nextfile = first;
-        strcpy(new->name, m.text);
+        strcpy(new->name, m.filename);
         first = new;
         strcpy(answer->command, "File opened");
-        strcpy(answer->text, m.text);
+        strcpy(answer->filename, m.filename);
       }
     }
   }
   else if (strcmp(m.command, "Create") == 0){
-    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
     if(temp != NULL){
       strcpy(answer->command, "File already created");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
     else{
-      int fd = open(m.text, O_RDWR, 0611);
+      int fd = open(m.filename, O_RDWR, 0611);
       if(fd != -1){
         strcpy(answer->command, "File already exists");
-        strcpy(answer->text, m.text);
+        strcpy(answer->filename, m.filename);
         close(fd);
       }
       else{
-        int fd = open(m.text, O_CREAT | O_TRUNC | O_RDWR, 0611);
+        int fd = open(m.filename, O_CREAT | O_TRUNC | O_RDWR, 0611);
         if(fd == -1){
           strcpy(answer->command, "File cannot be created");
-          strcpy(answer->text, m.text);
+          strcpy(answer->filename, m.filename);
         }
         else{
           struct file* new = (struct file*) malloc(sizeof(struct file));
           printf("Open\n");
           new->w_file = fd;
           new->nextfile = first;
-          strcpy(new->name, m.text);
+          strcpy(new->name, m.filename);
           first = new;
           strcpy(answer->command, "File created");
-          strcpy(answer->text, m.text);
+          strcpy(answer->filename, m.filename);
         }
       }
     }
   }
   else if (strcmp(m.command, "Close") == 0){
-    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
     if(temp == NULL){
       strcpy(answer->command, "File not open");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
     else{
       close(temp->w_file);
       free(temp);
       strcpy(answer->command, "File closed");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
   }
   else if (strcmp(m.command, "Read") == 0){
-    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
     if(temp == NULL){
       strcpy(answer->command, "File not open");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
     else if (temp != NULL){
       lseek(temp->w_file, 0, SEEK_SET);
@@ -150,21 +150,23 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->command, "File contents: ");
     }
   }
-/*  else if (strcmp(m.command, "modify") == 0){
-    while (temp != NULL && strcmp(temp->name, m.text) != 0){
+  else if (strcmp(m.command, "Modify") == 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
     if(temp == NULL){
       strcpy(answer->command, "file not open");
-      strcpy(answer->text, m.text);
+      strcpy(answer->filename, m.filename);
     }
     else{
-      
-    }*/
+      lseek(temp->w_file, 0, SEEK_END);
+      write(temp->w_file, m.text, strlen(m.text));
+      strcpy(answer->command, "File modified");
+    }
+  }
   else{
     printf("Invalid command: %s\n", m.command);
     strcpy(answer->command, "Invalid command");
-    strcpy(answer->text, m.text);
-
+    strcpy(answer->filename, m.filename);
   }
 }
