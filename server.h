@@ -3,7 +3,6 @@
 
 struct file{
   char name[200];
-  int fileind;
   int w_file;
   struct file *nextfile;
 };

@@ -18,7 +18,7 @@ int main() {
   while(1){
     struct message m;
     struct message answer;
-    printf("Open, Create, Close, Read, Modify: ");
+    printf("Open, Create, Close, Read, Modify, Clear: ");
     fgets(m.command,sizeof(m.command),stdin);
     m.command[strlen(m.command) - 1] = '\0';
     printf("File name: ");

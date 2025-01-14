@@ -147,7 +147,12 @@ void do_command(struct message m, struct message *answer){
       lseek(temp->w_file, 0, SEEK_SET);
       int n = read(temp->w_file, answer->text, sizeof(answer->text));
       answer->text[n] = '\0';
-      strcpy(answer->command, "File contents: ");
+      if (strcmp(answer->text, "") == 0){
+        strcpy(answer->command, "File has no contents");
+      }
+      else{
+        strcpy(answer->command, "File contents: ");
+      }
     }
   }
   else if (strcmp(m.command, "Modify") == 0){
@@ -164,9 +169,23 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->command, "File modified");
     }
   }
+  else if (strcmp(m.command, "Clear") == 0){
+    while (temp != NULL && strcmp(temp->name, m.filename) != 0){
+      temp = temp->nextfile;
+    }
+    if(temp == NULL){
+      strcpy(answer->command, "file not open");
+      strcpy(answer->filename, m.filename);
+    }
+    else{
+      fopen(m.filename, "w");
+      strcpy(answer->command, "File cleared");
+    }
+  }
   else{
     printf("Invalid command: %s\n", m.command);
     strcpy(answer->command, "Invalid command");
     strcpy(answer->filename, m.filename);
   }
 }
+

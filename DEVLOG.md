@@ -29,10 +29,13 @@ Updated open and create in do_command
 Added close to do_command
 
 ### 2024-01-13 - Brief description
-
+Added read command
+Added filename to message
+Made modify append line
 
 ### 2024-01-14 - Brief description
-
+Added clear command
+Modified read command to print "No contents" if file is empty
 
 ### 2024-01-05 - Brief description
 
