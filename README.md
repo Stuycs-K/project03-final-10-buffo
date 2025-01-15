@@ -7,7 +7,7 @@ Otto Buff
        
 ### Project Description:
 
-This project will allow clients to access files from a server – a collaborative text editor. The clients will be able to read and modify the files in the server, and the files will be stored in a linked list. Each file will have an index, allowing the clients to select a specific file. The contents of the file will be printed to the client, who will be able to modify it. The client sends back the modified file to the server.
+This project will allow clients to access files from a server – a collaborative text editor. The clients will be able to read and modify the files in the server, and the files will be stored in a linked list. Files will be stored in a linked list, and the client will be able to select a file to create, open, close, modify, read, or clear. The contents of the file will be printed to the client, who will be able to modify it by adding a line or clearing the file. The client sends back the modified file to the server.
   
 ### Instructions:
 

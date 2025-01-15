@@ -16,8 +16,8 @@ struct file *first = NULL;
 
 int main() {
   int from_client;
-  //signal(SIGINT, signal_handler);
-  //signal(SIGPIPE, SIG_IGN);
+  signal(SIGINT, signal_handler);
+  signal(SIGPIPE, SIG_IGN);
   while(1){
     int from_client = server_setup();
     pid_t p = fork();
@@ -42,7 +42,7 @@ int main() {
   }
 }
 
-/*void signal_handler(int signum, struct file *first) {
+void signal_handler(int signum, struct file *first) {
   printf("server exited\n");
   unlink(WKP);
   while(first != NULL){
@@ -52,12 +52,9 @@ int main() {
     free(first);
   }
   exit(1);
-}*/
+}
 
 void do_command(struct message m, struct message *answer){
-  
-  printf("Command: %s------\n", m.command);
-  printf("File name: %s------\n", m.filename);
   
   struct file *temp = first;
   
@@ -77,7 +74,6 @@ void do_command(struct message m, struct message *answer){
       }
       else{
         struct file* new = (struct file*) malloc(sizeof(struct file));
-        printf("Open\n");
         new->w_file = fd;
         new->nextfile = first;
         strcpy(new->name, m.filename);
@@ -110,7 +106,6 @@ void do_command(struct message m, struct message *answer){
         }
         else{
           struct file* new = (struct file*) malloc(sizeof(struct file));
-          printf("Open\n");
           new->w_file = fd;
           new->nextfile = first;
           strcpy(new->name, m.filename);
@@ -192,7 +187,6 @@ void do_command(struct message m, struct message *answer){
     }
   }
   else{
-    printf("Invalid command: %s\n", m.command);
     strcpy(answer->command, "Invalid command");
     strcpy(answer->filename, m.filename);
   }
