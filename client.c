@@ -7,6 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include "client.h"
+#include <ctype.h>
 #include "server.h"
 #include "pipe_networking.h"
 
@@ -24,7 +25,10 @@ int main() {
     printf("File name: ");
     fgets(m.filename,sizeof(m.filename),stdin);
     m.filename[strlen(m.filename) - 1] = '\0';
-    if(strcmp(m.command, "Modify") == 0){
+    for(int i = 0; m.command[i]; i++){
+      m.command[i] = tolower(m.command[i]);
+    }
+    if(strcmp(m.command, "modify") == 0){
       printf("Text: ");
       fgets(m.text,sizeof(m.text),stdin);
     }

@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <ctype.h>
 #include "server.h"
 #include "pipe_networking.h"
 
@@ -60,7 +61,7 @@ void do_command(struct message m, struct message *answer){
   
   struct file *temp = first;
   
-  if (strcmp(m.command, "Open") == 0){
+  if (strcmp(m.command, "open") == 0){
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
@@ -86,7 +87,7 @@ void do_command(struct message m, struct message *answer){
       }
     }
   }
-  else if (strcmp(m.command, "Create") == 0){
+  else if (strcmp(m.command, "create") == 0){
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
@@ -120,7 +121,7 @@ void do_command(struct message m, struct message *answer){
       }
     }
   }
-  else if (strcmp(m.command, "Close") == 0){
+  else if (strcmp(m.command, "close") == 0){
     struct file* temp1 = NULL;
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp1 = temp;
@@ -143,7 +144,7 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->filename, m.filename);
     }
   }
-  else if (strcmp(m.command, "Read") == 0){
+  else if (strcmp(m.command, "read") == 0){
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
@@ -163,7 +164,7 @@ void do_command(struct message m, struct message *answer){
       }
     }
   }
-  else if (strcmp(m.command, "Modify") == 0){
+  else if (strcmp(m.command, "modify") == 0){
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
@@ -177,7 +178,7 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->command, "File modified");
     }
   }
-  else if (strcmp(m.command, "Clear") == 0){
+  else if (strcmp(m.command, "clear") == 0){
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
       temp = temp->nextfile;
     }
@@ -186,7 +187,7 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->filename, m.filename);
     }
     else{
-      fopen(m.filename, "w");
+      ftruncate(temp->w_file, 0);
       strcpy(answer->command, "File cleared");
     }
   }
