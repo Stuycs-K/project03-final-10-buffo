@@ -36,6 +36,7 @@ Made modify append line
 ### 2024-01-14 - Brief description
 Added clear command
 Modified read command to print "No contents" if file is empty
+Fixed close command, added temp1 as previous file
 
 ### 2024-01-05 - Brief description
 
