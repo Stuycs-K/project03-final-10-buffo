@@ -121,7 +121,9 @@ void do_command(struct message m, struct message *answer){
     }
   }
   else if (strcmp(m.command, "Close") == 0){
+    struct file* temp1 = NULL;
     while (temp != NULL && strcmp(temp->name, m.filename) != 0){
+      temp1 = temp;
       temp = temp->nextfile;
     }
     if(temp == NULL){
@@ -130,6 +132,12 @@ void do_command(struct message m, struct message *answer){
     }
     else{
       close(temp->w_file);
+      if(temp1 == NULL){
+        first = temp->nextfile;
+      }
+      else{
+        temp1->nextfile = temp->nextfile;
+      }
       free(temp);
       strcpy(answer->command, "File closed");
       strcpy(answer->filename, m.filename);
@@ -188,4 +196,3 @@ void do_command(struct message m, struct message *answer){
     strcpy(answer->filename, m.filename);
   }
 }
-
