@@ -38,10 +38,12 @@ Added clear command
 Modified read command to print "No contents" if file is empty
 Fixed close command, added temp1 as previous file
 
-### 2024-01-05 - Brief description
-
+### 2024-01-15 - Brief description
+Made command case insensitive
+Readme, proposal updated, working on adding semaphores
 
 ### 2024-01-16 - Brief description
-
+Added exit command for client
+Changed semaphore key to first character of filename – files with the same first letter will use the same semaphore, but this is just overcaution. Semaphore key cannot be more than one character.
 
 ### 2024-01-17 - Brief description

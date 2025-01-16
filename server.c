@@ -18,19 +18,18 @@ struct file *first = NULL;
 
 int main() {
   int from_client;
-  signal(SIGINT, signal_handler);
-  signal(SIGPIPE, SIG_IGN);
   while(1){
     int from_client = server_setup();
     pid_t p = fork();
     if(p == 0){
+      printf("Client opened\n");
       int to_client = server_handshake_half( from_client );
       while(1){
         struct message m;
         struct message answer;
         int i = read(from_client,&m,sizeof(m));
         if(i <= 0){
-          printf("client exited\n");
+          printf("Client exited\n");
           break;
         }
         do_command(m, &answer);
@@ -42,18 +41,6 @@ int main() {
     }
     sleep(1);
   }
-}
-
-void signal_handler(int signum, struct file *first) {
-  printf("server exited\n");
-  unlink(WKP);
-  while(first != NULL){
-    struct file *p = first;
-    first = first->nextfile;
-    close(first->w_file);
-    free(first);
-  }
-  exit(1);
 }
 
 void do_command(struct message m, struct message *answer){
@@ -204,22 +191,23 @@ void do_command(struct message m, struct message *answer){
 
 int get_semaphore(char* filename){
   int semd;
-  semd = semget(filename, 1, IPC_CREAT | IPC_EXCL | 0644);
+  int key = *filename;
+  semd = semget(key, 1, IPC_CREAT | IPC_EXCL | 0644);
   if (semd == -1) {
-    semd = semget(filename, 1, 0);
+    semd = semget(key, 1, 0);
   }
   else{
     union semun us;
     us.val = 1;
     int r = semctl(semd, 0, SETVAL, us);
   }
-  printf("Getting semaphone for %s\n", filename);
+  //printf("Getting semaphone for %s\n", filename);
   struct sembuf sb;
   sb.sem_num = 0;
   sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1; //setting the operation to down
   semop(semd, &sb, 1); //perform the operation
-  printf("Got the semaphore!\n");
+  //printf("Got the semaphore!\n");
   return semd;
 }
 
@@ -229,4 +217,5 @@ void up_semaphore(int semd){
   sb.sem_flg = SEM_UNDO;
   sb.sem_op = 1; //setting the operation to up
   semop(semd, &sb, 1); //perform the operation
+  //printf("Returned the semaphore!\n");
 }

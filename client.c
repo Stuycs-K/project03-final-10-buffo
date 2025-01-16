@@ -19,20 +19,26 @@ int main() {
   while(1){
     struct message m;
     struct message answer;
-    printf("Open, Create, Close, Read, Modify, Clear: ");
+    printf("Open, Create, Close, Read, Modify, Clear, Exit: ");
     fgets(m.command,sizeof(m.command),stdin);
     m.command[strlen(m.command) - 1] = '\0';
-    printf("File name: ");
-    fgets(m.filename,sizeof(m.filename),stdin);
-    m.filename[strlen(m.filename) - 1] = '\0';
     for(int i = 0; m.command[i]; i++){
       m.command[i] = tolower(m.command[i]);
+    }
+    if(strcmp(m.command, "exit") != 0){
+      printf("File name: ");
+      fgets(m.filename,sizeof(m.filename),stdin);
+      m.filename[strlen(m.filename) - 1] = '\0';
     }
     if(strcmp(m.command, "modify") == 0){
       printf("Text: ");
       fgets(m.text,sizeof(m.text),stdin);
     }
     write(to_server,&m,sizeof(m));
+    if(strcmp(m.command, "exit") == 0){
+      printf("Goodbye!\n");
+      exit(0);
+    }
     int i = read(from_server,&answer,sizeof(answer));
     if(i <= 0){
       printf("server exited\n");
