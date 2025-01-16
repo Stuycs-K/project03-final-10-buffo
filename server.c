@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <ctype.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
 #include "server.h"
 #include "pipe_networking.h"
 
@@ -67,14 +69,17 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->filename, m.filename);
     }
     else{
+      int semd = get_semaphore(m.filename);
       int fd = open(m.filename, O_RDWR, 0611);
       if(fd == -1){
         strcpy(answer->command, "File does not exist");
         strcpy(answer->filename, m.filename);
+        up_semaphore(semd);
       }
       else{
         struct file* new = (struct file*) malloc(sizeof(struct file));
         new->w_file = fd;
+        new->semd = semd;
         new->nextfile = first;
         strcpy(new->name, m.filename);
         first = new;
@@ -92,10 +97,12 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->filename, m.filename);
     }
     else{
+      int semd = get_semaphore(m.filename);
       int fd = open(m.filename, O_RDWR, 0611);
       if(fd != -1){
         strcpy(answer->command, "File already exists");
         strcpy(answer->filename, m.filename);
+        up_semaphore(semd);
         close(fd);
       }
       else{
@@ -103,10 +110,12 @@ void do_command(struct message m, struct message *answer){
         if(fd == -1){
           strcpy(answer->command, "File cannot be created");
           strcpy(answer->filename, m.filename);
+          up_semaphore(semd);
         }
         else{
           struct file* new = (struct file*) malloc(sizeof(struct file));
           new->w_file = fd;
+          new->semd = semd;
           new->nextfile = first;
           strcpy(new->name, m.filename);
           first = new;
@@ -128,6 +137,7 @@ void do_command(struct message m, struct message *answer){
     }
     else{
       close(temp->w_file);
+      up_semaphore(temp->semd);
       if(temp1 == NULL){
         first = temp->nextfile;
       }
@@ -190,4 +200,33 @@ void do_command(struct message m, struct message *answer){
     strcpy(answer->command, "Invalid command");
     strcpy(answer->filename, m.filename);
   }
+}
+
+int get_semaphore(char* filename){
+  int semd;
+  semd = semget(filename, 1, IPC_CREAT | IPC_EXCL | 0644);
+  if (semd == -1) {
+    semd = semget(filename, 1, 0);
+  }
+  else{
+    union semun us;
+    us.val = 1;
+    int r = semctl(semd, 0, SETVAL, us);
+  }
+  printf("Getting semaphone for %s\n", filename);
+  struct sembuf sb;
+  sb.sem_num = 0;
+  sb.sem_flg = SEM_UNDO;
+  sb.sem_op = -1; //setting the operation to down
+  semop(semd, &sb, 1); //perform the operation
+  printf("Got the semaphore!\n");
+  return semd;
+}
+
+void up_semaphore(int semd){
+  struct sembuf sb;
+  sb.sem_num = 0;
+  sb.sem_flg = SEM_UNDO;
+  sb.sem_op = 1; //setting the operation to up
+  semop(semd, &sb, 1); //perform the operation
 }

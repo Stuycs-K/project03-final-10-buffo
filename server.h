@@ -3,6 +3,7 @@
 
 struct file{
   char name[200];
+  int semd;
   int w_file;
   struct file *nextfile;
 };
@@ -15,5 +16,7 @@ struct message{
 
 void signal_handler(int signum, struct file *first);
 void do_command(struct message m, struct message *answer);
+int get_semaphore(char* filename);
+void up_semaphore(int semd);
 
 #endif
