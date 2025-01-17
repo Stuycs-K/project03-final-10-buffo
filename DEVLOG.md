@@ -47,3 +47,4 @@ Added exit command for client
 Changed semaphore key to first character of filename – files with the same first letter will use the same semaphore, but this is just overcaution. Semaphore key cannot be more than one character.
 
 ### 2024-01-17 - Brief description
+Move "Invalid command" message to client.c

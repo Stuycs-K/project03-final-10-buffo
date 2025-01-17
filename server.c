@@ -183,10 +183,10 @@ void do_command(struct message m, struct message *answer){
       strcpy(answer->command, "File cleared");
     }
   }
-  else{
-    strcpy(answer->command, "Invalid command");
-    strcpy(answer->filename, m.filename);
-  }
+  //else{
+    //strcpy(answer->command, "Invalid command");
+    //strcpy(answer->filename, m.filename);
+  //}
 }
 
 int get_semaphore(char* filename){
